@@ -7,15 +7,19 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class SetUpDriver {
-	
-	String browser;
-	public static WebDriver driver;
-	
-	public SetUpDriver(WebDriver driver) {
+
+	public WebDriver driver;
+	public String browser = "chrome";
+
+	public SetUpDriver() {
+
 		setDriver();
-		this.driver = driver;
 	}
-	
+
+	public WebDriver getDriver() {
+		return driver;
+	}
+
 	public void setDriver() {
 		if (browser.equalsIgnoreCase("Chrome")) {
 			WebDriverManager.chromedriver().setup();
