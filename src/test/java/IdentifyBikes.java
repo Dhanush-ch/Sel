@@ -15,56 +15,43 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import objectRepository.POM_IdentifyBikes;
 
-public class HelloWorld {
+public class IdentifyBikes {
 	public static WebDriver driver;
-	public static String urll = "https://www.zigwheels.com";
 	String browser;
 	String mainWindow;
 	WebDriverWait wait;
 
-	public HelloWorld(String browser) {
+	public IdentifyBikes(String browser) {
 		this.browser = browser;
 	}
+	
+	//Creating a instance of POM_IdentifyBikes to access its non-static methods
+	POM_IdentifyBikes bikesObj = new POM_IdentifyBikes();
 
-	public void setDriver() {
-		if (browser.equalsIgnoreCase("Chrome")) {
-			WebDriverManager.chromedriver().setup();
-			driver = new ChromeDriver();
-		} else if (browser.equalsIgnoreCase("firefox")) {
-			WebDriverManager.firefoxdriver().setup();
-			driver = new FirefoxDriver();
-		}
-		driver.manage().window().maximize();
-		driver.get(urll);
-	}
+	
 
 	public void upcomingBikes() {
 		wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+		
 		// Hover over New bikes
 		wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.linkText("New Bikes")));
-		WebElement newBikes = driver.findElement(By.linkText("New Bikes"));
-		Actions action = new Actions(driver);
-		action.moveToElement(newBikes).perform();
-
-		wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Upcoming Bikes")));
-
+		bikesObj.hoverNewBikes();
+		
 		// Click Upcoming Bikes
-		WebElement upcomingBikes = driver.findElement(By.linkText("Upcoming Bikes"));
-		upcomingBikes.click();
+		wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Upcoming Bikes")));
+		bikesObj.selectUpcomingBikes().click();
 
 		// Select Manufacturer
 		try {
-			WebElement manf = driver.findElement(By.id("makeId"));
-			// Wait
-			wait.until(ExpectedConditions.elementToBeClickable(manf));
 
-			Select select = new Select(manf);
+			wait.until(ExpectedConditions.elementToBeClickable(bikesObj.selectManufacturer()));
+			Select select = new Select(bikesObj.selectManufacturer());
 			select.selectByVisibleText("Honda");
 
 			// Get Total no.of.bikes
-			String str = driver.findElement(By.xpath("//div[@id='carModels']//span[1]")).getText();
-			int totalBikes = Integer.parseInt(str.replaceAll("[^0-9]", ""));
+			int totalBikes = bikesObj.getTotalBikes();
 			System.out.println(totalBikes);
 
 			// print Bikes list
@@ -83,11 +70,12 @@ public class HelloWorld {
 						.findElement(By.xpath("//ul[@id='modelList']/li[" + i + "]/div/div[3]/div[2]")).getText();
 
 				if (i == 6) {
-					WebElement viewMoreBtn = driver.findElement(By.className("zw-cmn-loadMore"));
+					WebElement viewmoreBtn = bikesObj.clickViewmoreBtn();
+					viewmoreBtn.click();
 					JavascriptExecutor js = (JavascriptExecutor) driver;
-					js.executeScript("arguments[0].scrollIntoView();", viewMoreBtn);
-					wait.until(ExpectedConditions.elementToBeClickable(viewMoreBtn));
-					js.executeScript("arguments[0].click();", viewMoreBtn);
+					js.executeScript("arguments[0].scrollIntoView();", viewmoreBtn);
+					wait.until(ExpectedConditions.elementToBeClickable(viewmoreBtn));
+					js.executeScript("arguments[0].click();", viewmoreBtn);
 				}
 				System.out.println(bikeModel + "\t" + bikePrice + "\t" + launchDate);
 			}
@@ -182,11 +170,10 @@ public class HelloWorld {
 
 	public static void main(String args[]) throws Exception {
 		System.out.println("Hello World!!");
-		HelloWorld obj = new HelloWorld("chrome");
-		obj.setDriver();
-//		obj.upcomingBikes();
+		IdentifyBikes obj = new IdentifyBikes("chrome");
+		obj.upcomingBikes();
 		obj.googleLogin();
-//		obj.usedCars();
+		obj.usedCars();
 		obj.endSession();
 
 	}
