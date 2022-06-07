@@ -8,6 +8,7 @@ public class QuitDriver {
 
 	WebDriver driver = POM_IdentifyBikes.getDriver();
 
+	//Quit driver
 	public void endSession() {
 		driver.quit();
 	}

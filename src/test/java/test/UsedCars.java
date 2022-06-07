@@ -37,7 +37,8 @@ public class UsedCars {
 		WebElement ul = driver.findElement(By.xpath("//ul[contains(@class, ' usedCarMakeModelList ')]"));
 		ArrayList<WebElement> list = new ArrayList<WebElement>(ul.findElements(By.tagName("li")));
 		Iterator<WebElement> i1 = list.iterator();
-
+		
+		//print popular car models list
 		while (i1.hasNext()) {
 			System.out.println(i1.next().getText());
 		}
